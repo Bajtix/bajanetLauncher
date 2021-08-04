@@ -1,0 +1,32 @@
+﻿=== UpdateScript v2 Standard ===
+
+Header: updatescript v2.0
+Content:
+The script consists of blocks - each one can correlate to one or many versions. Internally, versions are integers, but can be written as floats in the script. This is an example of a block definition;
+
+@0.1.0; 0.2.0; 0.2.1
+
+They mustn't contain any letters, but can contain spaces for clarity - they are skipped in the parsing.
+Reset versions are marked as follows;
+
+! ( version comment / any text)
+
+The normal way of installing a version is to install everything from the last reset up to the selected one.
+Resets are there so we dont have to install everything - you can just install from the latest reset. The code between a reset and another version block is the cleanup code - it will run if you are upgrading from the previous version.
+
+Commands:
+# - a comment. Syntax: #[text]
++ - download file from url. Syntax: +[url];[file]
+- - remove a file at path. Syntax: -[path]
+$ - run a shell command. Syntax: $[command]
+c - copy file from path a to path b. Syntax: c[path a];[path b]
+d - change directory. Syntax: d[path]
+' - print. Syntax: '[text]
+~ - timeout. Wait for X seconds. Syntax: ~[seconds]
+^ - unzip. Syntax: ^[archive path];[folder]
+
+< - return a value. Used for interpreted envs. Syntax: <[text]
+
+Variables:
+There are no variables per say, but the environment can set its own ones and they should be respected. The syntax is:
+[&variableName]

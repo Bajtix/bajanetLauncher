@@ -1,0 +1,43 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:bajanetLauncher="clr-namespace:bajanetLauncher"
+             xmlns:animation="clr-namespace:Avalonia.Animation"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="bajanetLauncher.StoreAppDBView">
+    
+    <ItemsControl Name="ItemsList" Items="{Binding Items}">
+        <ItemsControl.ItemTemplate>
+            
+            <DataTemplate DataType="bajanetLauncher:StoreApp">
+                <Border CornerRadius="4" Margin="2 0 2 4" Classes="NotSelected" PointerPressed="InputElement_OnPointerPressed" Initialized="StyledElement_OnInitialized">
+                    <Border.Styles>
+                        <Style Selector="Border.NotSelected">
+                            <Setter Property="Background" Value="#111"/>
+                            <Setter Property="Opacity" Value="0.6"></Setter>
+                        </Style>
+                        <Style Selector="Border:pointerover">
+                            <Setter Property="Background" Value="#555"/>
+                            <Setter Property="Opacity" Value="1"></Setter>
+                        </Style>
+                        <Style Selector="Border.Selected">
+                            <Setter Property="Background" Value="#333"/>
+                            <Setter Property="Opacity" Value="1"></Setter>
+                        </Style>
+                        
+                    </Border.Styles>
+                    <Border.Transitions>
+                        <Transitions>
+                        </Transitions>
+                    </Border.Transitions>
+                    <Grid ColumnDefinitions="64,*" VerticalAlignment="Center">
+                        <Image Grid.Column="0" Source="{Binding AppIcon}" Width="64" Height="64"></Image>
+                        <TextBlock Grid.Column="1" Text="{Binding Name}" TextAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                    </Grid>
+                    
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>
