@@ -18,7 +18,7 @@ namespace bajanetLauncher {
         
         private Bitmap _bajaLogo;
 
-        private string _welcomeMessage = "Welcome to bajanet! It looks like you are offline, but if you have apps installed you still should be able to view them!";
+        private string _welcomeMessage = "Loading stuff... Please wait";
 
         public Bitmap BajaLogo {
             get => _bajaLogo;

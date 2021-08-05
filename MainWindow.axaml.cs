@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
@@ -91,27 +92,40 @@ namespace bajanetLauncher {
         }
 
         private void LoadDb() {
-            
-            string launcherVersion,dbResponse,localDbResponse = File.ReadAllText(localDb);
-            try {
-                dbResponse = FetchDb(apiUrl);
-                launcherVersion = GetLauncherInfo(FetchDb(launcherApi));
-            }
-            catch {
-                dbResponse = localDbResponse;
-                launcherVersion = currentLauncherVersion;
-            }
+            string launcherVersion = currentLauncherVersion, dbResponse, localDbResponse = File.ReadAllText(localDb);
+            dbResponse = localDbResponse;
+            data.ConnectionStatus = "Loading";
+            Task dbSync = new Task(() => {
+    #if DEBUG
+                Thread.Sleep(1000);
+#endif
+                isBusy = true;
+                try {
+                    dbResponse = FetchDb(apiUrl);
+                    launcherVersion = GetLauncherInfo(FetchDb(launcherApi));
+                }
+                catch (Exception e) {
+                    dbResponse = localDbResponse; // pointless
+                    launcherVersion = currentLauncherVersion;
+                    data.WelcomeMessage = $"## Welcome to bajanet! \nIt looks like there were problems loading apps: `{e.Message}`, but if you have apps installed you still should be able to view them! (If the Connection Status says we are online, please report this bug)";
+                }
 
-            if (launcherVersion != currentLauncherVersion) {
-                AskToUpdate();
-            }
-            
-            
-            localApps = new StoreAppDB(localDbResponse);
-            var apps = new StoreAppDB(dbResponse);
-            data.Applist = new StoreAppDBViewModel(apps.GetItems());
+                isBusy = false;
+            });
+            dbSync.ContinueWith(task => {
+                if (launcherVersion != currentLauncherVersion) {
+                    AskToUpdate();
+                }
 
-            OnlineCheck(); // kinda wasting bandwidth
+
+                localApps = new StoreAppDB(localDbResponse);
+                var apps = new StoreAppDB(dbResponse);
+                data.Applist = new StoreAppDBViewModel(apps.GetItems());
+
+                OnlineCheck(); // kinda wasting bandwidth
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+
+            dbSync.Start();
         }
 
         private string GetLauncherInfo(string json) {
@@ -231,14 +245,16 @@ namespace bajanetLauncher {
             
             
             app = GetGlobal(app);
-
+            var list = this.Find<StoreAppDBView>("AppListDisplay") as StoreAppDBView;
             if (app == null) {
                 this.Find<Panel>("WelcomeNote").IsVisible = true;
                 this.Find<Border>("AppDetails").IsVisible = false;
+                data.SelectedApp = -1;
+                list.SelectionVisual(data.SelectedApp, listPresenter);
                 return;
             }
 
-            var list = this.Find<StoreAppDBView>("AppListDisplay") as StoreAppDBView;
+            
             
             
             
@@ -359,6 +375,10 @@ namespace bajanetLauncher {
 
         private void StyledElement_OnInitialized(object? sender, EventArgs e) {
             LoadDb();
+        }
+
+        private void ShowStartupPanel(object? sender, PointerPressedEventArgs e) {
+            LoadAppToContext(null!);
         }
     }
 }

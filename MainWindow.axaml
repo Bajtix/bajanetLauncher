@@ -20,7 +20,7 @@
     <Grid ColumnDefinitions="*" RowDefinitions="60,*,32" ShowGridLines="False">
         <!-- Header-->
         <Border Grid.Row="0" BorderThickness="0 0 0 2">
-            <StackPanel Background="#111" Orientation="Horizontal" Height="60">
+            <StackPanel Background="#111" Orientation="Horizontal" Height="60" PointerPressed="ShowStartupPanel">
                 <Image Width="60" Height="60" Source="{Binding BajaLogo}"></Image>
                 <Label FontSize="34" Height="60">bajanet launcher</Label>
             </StackPanel>
