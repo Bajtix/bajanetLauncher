@@ -31,11 +31,16 @@ namespace bajanetLauncher {
         private bool isBusy = false;
 
         private bool isOnline = false;
-
+#if DEBUG
         public static string apiUrl = "http://127.0.0.1/bajanet/listapps.php";
         public static string launcherApi = "http://127.0.0.1/bajanet/launcher.php";
+#else
+        
+        public static string apiUrl = "http://mc.bajtix.xyz/bajanet/listapps.php";
+        public static string launcherApi = "http://mc.bajtix.xyz/bajanet/launcher.php";
+    #endif
 
-        public const string currentLauncherVersion = "v0.7b";
+        public const string currentLauncherVersion = "v0.7f";
 
         public MainWindow() {
             data = new MainWindowModel();
@@ -81,8 +86,7 @@ namespace bajanetLauncher {
             install = this.Find<Button>("Install");
             uninstall = this.Find<Button>("Uninstall");
             installing = this.Find<ProgressBar>("Installing");
-
-            LoadDb();
+            
         }
 
         private void LoadDb() {
@@ -97,9 +101,10 @@ namespace bajanetLauncher {
             }
 
             if (launcherVersion != currentLauncherVersion) {
-                
+                AskToUpdate();
             }
-            AskToUpdate();
+            
+            
             localApps = new StoreAppDB(localDbResponse);
             var apps = new StoreAppDB(dbResponse);
             data.Applist = new StoreAppDBViewModel(apps.GetItems());
@@ -108,7 +113,11 @@ namespace bajanetLauncher {
         }
 
         private void AskToUpdate() {
-            new UpdateRequestWindow().Show();
+            var updateDialogue = new UpdateRequestWindow(this);
+            
+            updateDialogue.Focus();
+            updateDialogue.Show();
+            
         }
 
         private string FetchDb(string uri) {
@@ -170,7 +179,12 @@ namespace bajanetLauncher {
         private void Launch(StoreApp app) {
             //TODO: make cross platform
             app = GetLocal(app);
-            Process.Start(Path.Combine(app.BuildUrl, "start.exe"));
+            string execname = "start.exe";
+            if (File.Exists(Path.Combine(app.BuildUrl, "package.ini"))) {
+                IniFile f = new IniFile(File.ReadAllText(Path.Combine(app.BuildUrl, "package.ini")));
+                execname = f.Get("Exec", "Bajanet");
+            }
+            Process.Start(Path.Combine(app.BuildUrl, execname));
             Close();
         }
 
@@ -333,6 +347,10 @@ namespace bajanetLauncher {
             SaveDb();
             LoadDb();
             LoadAppToContext(null);
+        }
+
+        private void StyledElement_OnInitialized(object? sender, EventArgs e) {
+            LoadDb();
         }
     }
 }

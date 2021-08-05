@@ -2,12 +2,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
-        MaxHeight="200" MaxWidth="300" CanResize="False"
-        MinHeight="200" MinWidth="300"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="100"
+        MaxHeight="100" MaxWidth="300" CanResize="True" ShowActivated="True" 
+        MinHeight="100" MinWidth="300"
         x:Class="bajanetLauncher.UpdateRequestWindow" ShowInTaskbar="False" Topmost="True"
         Title="bajanet">
-    <Grid RowDefinitions="30,*">
+    <Grid RowDefinitions="30,*,*">
         <Label HorizontalContentAlignment="Center" Background="#111">An update is available!</Label> 
+        <TextBlock Grid.Row="1" TextWrapping="Wrap" TextAlignment="Center">There is a new version of the app which should fix bugs and your mom and etc.</TextBlock>
+        <Grid Grid.Row="2" ColumnDefinitions="*,*">
+            <Button Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="Ok_OnClick">Download now</Button>
+            <Button Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="Nah_OnClick">Nah</Button>
+        </Grid>
     </Grid>
 </Window>

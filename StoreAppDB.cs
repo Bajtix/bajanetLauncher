@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 namespace bajanetLauncher {
     public class StoreAppDB {
         public List<StoreApp> apps = new List<StoreApp>() {
-            new StoreApp("Pierwsza aplikacja testowa"), new StoreApp("Druga aplikacja")
         };
 
         public StoreAppDB() {
@@ -47,6 +46,8 @@ namespace bajanetLauncher {
         }
         
         public StoreAppDB(string json) {
+            // temp fix for bug in backend
+            if (json == String.Empty || json == "{}[]") return;
             dynamic d = JsonConvert.DeserializeObject(json)!;
             apps = new List<StoreApp>();
             if (d.software == null) return;
@@ -59,13 +60,14 @@ namespace bajanetLauncher {
 
         public string ToJSON() {
             List<SStoreApp> software = new();
-            // TODO: add crossplatform support
+            // TODO: add cross-platform support
             foreach (var item in apps) {
                 software.Add(new SStoreApp(item.Id, item.Name, StoreApp.ToBase64(item.AppIcon), item.Description, item.Version, item.VersionDate.ToString(), item.Changelog, item.BuildUrl, "","",""));
             }
 
-            SStoreDb d = new();
-            d.software = software.ToArray();
+            SStoreDb d = new() {
+                software = software.ToArray()
+            };
 
             return JsonConvert.SerializeObject(d);
         }

@@ -70,20 +70,26 @@ Morskim opowieściom.
         }
         
         public static Bitmap Base64StringToBitmap(string base64String) {
-            Bitmap bmpReturn = null;
-            //Convert Base64 string to byte[]
-            byte[] byteBuffer = Convert.FromBase64String(base64String);
-            MemoryStream memoryStream = new MemoryStream(byteBuffer);
+            try {
+                Bitmap bmpReturn = null;
+                //Convert Base64 string to byte[]
+                byte[] byteBuffer = Convert.FromBase64String(base64String);
+                MemoryStream memoryStream = new MemoryStream(byteBuffer);
 
-            memoryStream.Position = 0;
+                memoryStream.Position = 0;
 
-            bmpReturn = new Bitmap(memoryStream);
+                bmpReturn = new Bitmap(memoryStream);
 
-            memoryStream.Close();
-            memoryStream = null;
-            byteBuffer = null;
+                memoryStream.Close();
+                memoryStream = null;
+                byteBuffer = null;
 
-            return bmpReturn;
+                return bmpReturn;
+            }
+            catch {
+                return Base64StringToBitmap(StoreApp.MISSING_DEFAULT_ICON);
+            }
+            
         }
 
         public static string ToBase64(Bitmap b) {
