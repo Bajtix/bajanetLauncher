@@ -6,7 +6,9 @@
         MaxHeight="100" MaxWidth="300" CanResize="True" ShowActivated="True" 
         MinHeight="100" MinWidth="300"
         x:Class="bajanetLauncher.UpdateRequestWindow" ShowInTaskbar="False" Topmost="True"
-        Title="bajanet">
+        Icon="/Assets/icon.ico"
+        Title="bajanet update">
+
     <Grid RowDefinitions="30,*,*">
         <Label HorizontalContentAlignment="Center" Background="#111">An update is available!</Label> 
         <TextBlock Grid.Row="1" TextWrapping="Wrap" TextAlignment="Center">There is a new version of the app which should fix bugs and your mom and etc.</TextBlock>

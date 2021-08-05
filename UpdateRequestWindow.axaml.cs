@@ -33,7 +33,7 @@ namespace bajanetLauncher {
 
         private void Ok_OnClick(object? sender, RoutedEventArgs e) {
             if(File.Exists("C:/tmp/bajasoftinstaller.exe")) File.Delete("C:/tmp/bajasoftinstaller.exe");
-            File.Copy("Resources/bajasoftinstaller.exe", "C:/tmp/bajasoftinstaller.exe");
+            File.Copy("Assets/bajasoftinstaller.exe", "C:/tmp/bajasoftinstaller.exe");
             Process.Start("C:/tmp/bajasoftinstaller.exe","--silent");
             mainWindow.Close();
             this.Close();

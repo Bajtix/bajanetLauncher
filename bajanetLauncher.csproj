@@ -13,14 +13,18 @@
         <PackageReference Include="ZipStorer" Version="3.6.0" />
     </ItemGroup>
     <ItemGroup>
-      <None Update="Resources\bajaLogo.png">
+      <None Update="Assets\bajaLogo.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Resources\icon.ico">
+      <None Update="Assets\icon.ico">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Resources\bajasoftinstaller.exe">
+      <None Update="Assets\bajasoftinstaller.exe">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**" />
+    </ItemGroup>
+
 </Project>

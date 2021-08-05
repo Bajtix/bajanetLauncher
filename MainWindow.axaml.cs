@@ -13,6 +13,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
+using Newtonsoft.Json;
 
 namespace bajanetLauncher {
     public partial class MainWindow : Window {
@@ -66,7 +67,7 @@ namespace bajanetLauncher {
 
             appFolder = Path.Combine(appData, "apps");
 
-            data.BajaLogo = new Bitmap("Resources/bajaLogo.png");
+            data.BajaLogo = new Bitmap("Assets/bajaLogo.png");
 
             Directory.CreateDirectory(appFolder);
         }
@@ -90,12 +91,13 @@ namespace bajanetLauncher {
         }
 
         private void LoadDb() {
+            
             string launcherVersion,dbResponse,localDbResponse = File.ReadAllText(localDb);
             try {
                 dbResponse = FetchDb(apiUrl);
-                launcherVersion = FetchDb(launcherApi);
+                launcherVersion = GetLauncherInfo(FetchDb(launcherApi));
             }
-            catch (WebException we) {
+            catch {
                 dbResponse = localDbResponse;
                 launcherVersion = currentLauncherVersion;
             }
@@ -110,6 +112,12 @@ namespace bajanetLauncher {
             data.Applist = new StoreAppDBViewModel(apps.GetItems());
 
             OnlineCheck(); // kinda wasting bandwidth
+        }
+
+        private string GetLauncherInfo(string json) {
+            dynamic info = JsonConvert.DeserializeObject(json);
+            data.WelcomeMessage = info.welcomescreen;
+            return info.version;
         }
 
         private void AskToUpdate() {

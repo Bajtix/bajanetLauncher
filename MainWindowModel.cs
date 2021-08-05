@@ -18,6 +18,8 @@ namespace bajanetLauncher {
         
         private Bitmap _bajaLogo;
 
+        private string _welcomeMessage = "Welcome to bajanet! It looks like you are offline, but if you have apps installed you still should be able to view them!";
+
         public Bitmap BajaLogo {
             get => _bajaLogo;
             set {
@@ -33,6 +35,16 @@ namespace bajanetLauncher {
             set {
                 if (value != _appdata_AppName) {
                     _appdata_AppName = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+        public string WelcomeMessage {
+            get => _welcomeMessage;
+            set {
+                if (value != _welcomeMessage) {
+                    _welcomeMessage = value;
                     OnPropertyChanged();
                 }
             }

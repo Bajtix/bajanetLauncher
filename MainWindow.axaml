@@ -8,6 +8,7 @@
         x:Class="bajanetLauncher.MainWindow" 
         Title="bajanetLauncher"
         FontFamily="Segoe UI"
+        Icon="/Assets/icon.ico"
         Initialized="StyledElement_OnInitialized"
         >
     
@@ -56,12 +57,13 @@
                         </ScrollViewer>
                     </Grid>
                 </Border>
-                <Panel Name="WelcomeNote" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="True">
-                    <TextBlock TextWrapping="Wrap">
-                        Welcome to bajanet! Browse available apps and click the one you wish to install! Have fun.
-                        
-                        ~ bajtixone
-                    </TextBlock>
+                <Panel Name="WelcomeNote" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2 2" IsVisible="True">
+                    <!-- <TextBlock TextWrapping="Wrap"> -->
+                    <!--     Welcome to bajanet! Browse available apps and click the one you wish to install! Have fun. -->
+                    <!--      -->
+                    <!--     ~ bajtixone -->
+                    <!-- </TextBlock> -->
+                    <avalonia:MarkdownScrollViewer Markdown="{Binding WelcomeMessage}"></avalonia:MarkdownScrollViewer>
                 </Panel>
             </Grid>
         </Border>
