@@ -31,6 +31,7 @@ namespace bajanetLauncher {
         public ItemsPresenter listPresenter;
 
         private bool isBusy = false;
+        
 
         private bool isOnline = false;
 #if DEBUG
@@ -91,7 +92,7 @@ namespace bajanetLauncher {
             
         }
 
-        private void LoadDb() {
+        private void LoadDb(bool runSync = false) {
             string launcherVersion = currentLauncherVersion, dbResponse, localDbResponse = File.ReadAllText(localDb);
             dbResponse = localDbResponse;
             data.ConnectionStatus = "Loading";
@@ -99,7 +100,34 @@ namespace bajanetLauncher {
     #if DEBUG
                 Thread.Sleep(1000);
 #endif
-                isBusy = true;
+                try {
+                    dbResponse = FetchDb(apiUrl);
+                    launcherVersion = GetLauncherInfo(FetchDb(launcherApi));
+                }
+                catch (Exception e) {
+                    dbResponse = localDbResponse; // pointless
+                    launcherVersion = currentLauncherVersion;
+                    data.WelcomeMessage = $"## Welcome to bajanet! \nIt looks like there were problems loading apps: `{e.Message}`, but if you have apps installed you still should be able to view them! (If the Connection Status says we are online, please report this bug)";
+                }
+                
+            });
+            if (!runSync) {
+                dbSync.ContinueWith(task => {
+                    if (launcherVersion != currentLauncherVersion) {
+                        AskToUpdate();
+                    }
+
+
+                    localApps = new StoreAppDB(localDbResponse);
+                    var apps = new StoreAppDB(dbResponse);
+                    data.Applist = new StoreAppDBViewModel(apps.GetItems());
+
+                    OnlineCheck(); // kinda wasting bandwidth
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+
+                dbSync.Start();
+            }
+            else { // copied method. couldn't really figure out how to run the task correctly
                 try {
                     dbResponse = FetchDb(apiUrl);
                     launcherVersion = GetLauncherInfo(FetchDb(launcherApi));
@@ -110,23 +138,16 @@ namespace bajanetLauncher {
                     data.WelcomeMessage = $"## Welcome to bajanet! \nIt looks like there were problems loading apps: `{e.Message}`, but if you have apps installed you still should be able to view them! (If the Connection Status says we are online, please report this bug)";
                 }
 
-                isBusy = false;
-            });
-            dbSync.ContinueWith(task => {
-                if (launcherVersion != currentLauncherVersion) {
-                    AskToUpdate();
-                }
-
 
                 localApps = new StoreAppDB(localDbResponse);
                 var apps = new StoreAppDB(dbResponse);
                 data.Applist = new StoreAppDBViewModel(apps.GetItems());
 
                 OnlineCheck(); // kinda wasting bandwidth
-            }, TaskScheduler.FromCurrentSynchronizationContext());
-
-            dbSync.Start();
+            }
         }
+
+        
 
         private string GetLauncherInfo(string json) {
             dynamic info = JsonConvert.DeserializeObject(json);
@@ -226,13 +247,15 @@ namespace bajanetLauncher {
                 Directory.Delete(folder,true);
                 localApps.apps.Remove(app);
                 SaveDb();
-                LoadDb();
+                LoadDb(true); // already in task, can cause issues when not ran in sync
             });
             delete.ContinueWith(task => {
+                
                 installing.IsVisible = false;
                 install.IsVisible = true;
                 
                 LoadAppToContext(app);
+                
                 isBusy = false;
                 this.Find<StoreAppDBView>("AppListDisplay").IsEnabled = true;
             }, TaskScheduler.FromCurrentSynchronizationContext());
