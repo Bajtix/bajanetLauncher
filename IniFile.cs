@@ -16,16 +16,23 @@ namespace bajanetLauncher {
             string[] lines = text.Split(Environment.NewLine);
 
             foreach (var line in lines) {
+                if(line == string.Empty) continue;
+                
                 if (line.StartsWith('[')) {
                     //its a header
                     currentHeader = line.Replace("[","").Replace("]","");
                     file.Add(currentHeader, new Dictionary<string, string>());
                     continue;
                 }
-
-                string varname = line.Split('=')[0];
-                string valname = line.Split('=')[1];
-                file[currentHeader].Add(varname,valname);
+                if(!line.Contains('=')) continue;
+                try {
+                    string varname = line.Split('=')[0];
+                    string valname = line.Split('=')[1];
+                    file[currentHeader].Add(varname, valname);
+                }
+                catch {
+                    // ignore
+                }
             }
         }
 
