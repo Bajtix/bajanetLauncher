@@ -45,7 +45,7 @@ namespace bajanetLauncher {
         public static string launcherApi = "http://mc.bajtix.xyz/bajanet/launcher.php";
     #endif
 
-        public const string currentLauncherVersion = "v0.75f";
+        public const string currentLauncherVersion = "v0.75f-patch1";
 
         public MainWindow() {
             data = new MainWindowModel();
