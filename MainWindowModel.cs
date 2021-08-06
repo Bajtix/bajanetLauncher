@@ -10,6 +10,7 @@ namespace bajanetLauncher {
         private string _appdata_AppName;
         private string _appdata_AppVersion;
         private string _appdata_AppDescription;
+        private string _appdata_AppChangelog;
         private Bitmap _appdata_Icon;
         private string _appdata_AppSystems;
         private StoreAppDBViewModel _applist;
@@ -55,6 +56,16 @@ namespace bajanetLauncher {
             set {
                 if (value != _appdata_AppDescription) {
                     _appdata_AppDescription = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+        public string Appdata_AppChangelog {
+            get => _appdata_AppChangelog;
+            set {
+                if (value != _appdata_AppChangelog) {
+                    _appdata_AppChangelog = value;
                     OnPropertyChanged();
                 }
             }

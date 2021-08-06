@@ -13,7 +13,9 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.VisualTree;
 using Newtonsoft.Json;
 
 namespace bajanetLauncher {
@@ -83,13 +85,11 @@ namespace bajanetLauncher {
         
         private void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
-            this.Width = 700;
-            this.Height = 400;
-            
+
             install = this.Find<Button>("Install");
             uninstall = this.Find<Button>("Uninstall");
             installing = this.Find<ProgressBar>("Installing");
-            
+            ClientSizeProperty.Changed.Subscribe(args => WindowResized());
         }
 
         private void LoadDb(bool runSync = false) {
@@ -156,11 +156,12 @@ namespace bajanetLauncher {
         }
 
         private void AskToUpdate() {
+#if !DEBUG
             var updateDialogue = new UpdateRequestWindow(this);
             
             updateDialogue.Focus();
             updateDialogue.Show();
-            
+#endif
         }
 
         private string FetchDb(string uri) {
@@ -286,7 +287,8 @@ namespace bajanetLauncher {
             data.Appdata_Icon = app.AppIcon;
             data.Appdata_AppName = app.Name;
             data.Appdata_AppVersion = $"{app.Version} [{app.VersionDate.ToString()}]";
-            data.Appdata_AppDescription = app.Description + "\n" + app.Changelog;
+            data.Appdata_AppDescription = app.Description;
+            data.Appdata_AppChangelog = "# Changelog \n" + app.Changelog;
             data.SelectedApp = data.Applist.Items.IndexOf(GetGlobal(app));
             
             data.Appdata_AppSystems = "[Windows]";
@@ -402,6 +404,23 @@ namespace bajanetLauncher {
 
         private void ShowStartupPanel(object? sender, PointerPressedEventArgs e) {
             LoadAppToContext(null!);
+        }
+
+        private void WindowResized() {
+            if (Width <= 850) {
+                this.Find<Grid>("AppinfoGridlayout").IsVisible = false;
+                this.Find<TabControl>("AppinfoTablayout").IsVisible = true;
+            }
+            else {
+                this.Find<Grid>("AppinfoGridlayout").IsVisible = true;
+                this.Find<TabControl>("AppinfoTablayout").IsVisible = false;
+            }
+        }
+
+        private void DebugTabItemSt(object? sender, GotFocusEventArgs eventArgs) {
+            var w = sender as TabItem;
+            var ob = w.GetVisualChildren().ToList()[0].VisualChildren[0].VisualChildren[1] as Border;
+            ob.Background = new SolidColorBrush(Colors.WhiteSmoke);
         }
     }
 }
